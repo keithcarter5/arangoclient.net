@@ -194,6 +194,16 @@ namespace ArangoDB.Client
         /// <param name="rev">Conditionally replace a document based on revision id</param>
         /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns>true if document found and removed</returns>
+        bool TryRemoveById<T>(string id, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Deletes the document without change tracking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="rev">Conditionally replace a document based on revision id</param>
+        /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
         IDocumentIdentifierResult RemoveById<T>(string id, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
@@ -206,6 +216,15 @@ namespace ArangoDB.Client
         /// <param name="waitForSync">Wait until document has been synced to disk</param>
         /// <returns></returns>
         Task<IDocumentIdentifierResult> RemoveByIdAsync<T>(string id, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
+
+        /// <summary>
+        /// Deletes the document
+        /// </summary>
+        /// <param name="document">document reference</param>
+        /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns></returns>
+        bool TryRemove<T>(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null);
 
         /// <summary>
         /// Deletes the document

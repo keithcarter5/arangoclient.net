@@ -234,6 +234,28 @@ namespace ArangoDB.Client
         }
 
         /// <summary>
+        /// Deletes the document, if it exists
+        /// </summary>
+        /// <param name="document">document reference</param>
+        /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns>true if document found and removed</returns>
+        public bool TryRemove<T>(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
+        {
+            bool result = false;
+            try
+            {
+                Collection<T>().Remove(document, waitForSync, ifMatchRev, baseResult);
+                result = true;
+            }
+            catch
+            {
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Deletes the document
         /// </summary>
         /// <param name="document">document reference</param>
@@ -255,6 +277,29 @@ namespace ArangoDB.Client
         public async Task<IDocumentIdentifierResult> RemoveAsync<T>(object document, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
         {
             return await Collection<T>().RemoveAsync(document, waitForSync, ifMatchRev, baseResult).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Deletes the document without change tracking
+        /// </summary>
+        /// <param name="id">The document handle or key of document</param>
+        /// <param name="rev">Conditionally replace a document based on revision id</param>
+        /// <param name="policy">To control the update behavior in case there is a revision mismatch</param>
+        /// <param name="waitForSync">Wait until document has been synced to disk</param>
+        /// <returns>true if document found and removed</returns>
+        public bool TryRemoveById<T>(string id, bool? waitForSync = null, string ifMatchRev = null, Action<BaseResult> baseResult = null)
+        {
+            bool result = false;
+            try
+            {
+                Collection<T>().RemoveById(id, waitForSync, ifMatchRev, baseResult);
+                result = true;
+            }
+            catch
+            {
+            }
+
+            return result;
         }
 
         /// <summary>
