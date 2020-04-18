@@ -26,20 +26,6 @@ namespace ArangoDB.Client.Property
             this.setting = setting;
         }
 
-        public void AddCollectionPropertySetting<T>(string collectionName, NamingConvention namingConvention = NamingConvention.UnChanged)
-        {
-            AddCollectionPropertySetting(typeof(T), collectionName, namingConvention);
-        }
-
-        public void AddCollectionPropertySetting(Type type, string collectionName, NamingConvention namingConvention = NamingConvention.UnChanged)
-        {
-            collectionProperties.GetOrAdd(type, new CollectionPropertySetting
-            {
-                CollectionName = collectionName,
-                Naming = namingConvention,
-            });
-        }
-
         public void ChangeIdentifierDefaultName(IdentifierType identifier, Func<Type, string> func)
         {
             if (IdentifierType.None == identifier)
@@ -100,7 +86,7 @@ namespace ArangoDB.Client.Property
             ChangeCollectionPropertyForType(typeof(T), action);
         }
 
-        internal void ChangeDocumentPropertyForType(Type type, string memberName, Action<IDocumentPropertySetting> action)
+        public void ChangeDocumentPropertyForType(Type type, string memberName, Action<IDocumentPropertySetting> action)
         {
             ChangeCollectionPropertyForType(type, collection =>
             {
