@@ -248,8 +248,12 @@ namespace ArangoDB.Client
                 Collection<T>().Remove(document, waitForSync, ifMatchRev, baseResult);
                 result = true;
             }
-            catch
+            catch (Exception ex)
             {
+                if (ex.GetType() != typeof(ArangoServerException))
+                {
+                    throw ex;
+                }
             }
 
             return result;
@@ -295,8 +299,12 @@ namespace ArangoDB.Client
                 Collection<T>().RemoveById(id, waitForSync, ifMatchRev, baseResult);
                 result = true;
             }
-            catch
+            catch (Exception ex)
             {
+                if (ex.GetType() != typeof(ArangoServerException))
+                {
+                    throw ex;
+                }
             }
 
             return result;
