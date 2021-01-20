@@ -12,6 +12,40 @@ using System.Threading.Tasks;
 
 namespace ArangoDB.Client.Serialization
 {
+#if (NETSTANDARD2_0)
+    public class StripAssemblyNameBinder : Newtonsoft.Json.Serialization.ISerializationBinder
+    {
+        private readonly Newtonsoft.Json.Serialization.ISerializationBinder binder;
+
+        public StripAssemblyNameBinder() : this(new Newtonsoft.Json.Serialization.DefaultSerializationBinder()) { }
+
+        public StripAssemblyNameBinder(Newtonsoft.Json.Serialization.ISerializationBinder binder)
+        {
+            this.binder = binder;
+        }
+
+        public void BindToName(Type serializedType, out string assemblyName, out string typeName)
+        {
+            binder.BindToName(serializedType, out assemblyName, out typeName);
+            if (typeName != null && typeName.Contains("Dictionary"))
+            {
+                typeName = null;
+            }
+            else if (typeName != null && typeName.Contains(","))
+            {
+                typeName = typeName.Substring(0, typeName.IndexOf(","));
+            }
+
+            assemblyName = null;
+        }
+
+        public Type BindToType(string assemblyName, string typeName)
+        {
+            return binder.BindToType(assemblyName, typeName);
+        }
+    }
+#endif
+
     public class DocumentSerializer
     {
         IArangoDatabase db;
@@ -99,7 +133,12 @@ namespace ArangoDB.Client.Serialization
                 {
                     ContractResolver = DocumentContractResolver.GetContractResolver(db),
                     Converters = convertes,
+                    //NullValueHandling = NullValueHandling.Ignore,
                     DateParseHandling = DateParseHandling.None,
+                    TypeNameHandling = TypeNameHandling.Auto,
+#if (NETSTANDARD2_0)
+                    //SerializationBinder = new StripAssemblyNameBinder(),
+#endif
                     MetadataPropertyHandling = db.Setting.Serialization.MetadataPropertyHandling
                 };
             }
